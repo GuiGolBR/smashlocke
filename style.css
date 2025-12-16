@@ -91,9 +91,26 @@ body {
     position: relative;
 }
 
+.card:hover {
+    filter: grayscale(70%);
+    animation: hover 0.25s ease;
+    animation-fill-mode: forwards;
+
+}
+
+@keyframes hover {
+    0%   { transform: scale(1); }
+    100%  { transform: scale(0.95) rotate(-1deg);}
+}
+
 .card.dead {
     filter: grayscale(100%);
     animation: deathPop 0.25s ease;
+}
+
+.card.dead:hover {
+    animation: hover 0.25s ease;
+    animation-fill-mode: forwards;
 }
 
 @keyframes deathPop {
