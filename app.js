@@ -4,6 +4,8 @@ window.onload = function () {
   const supabaseKey = "sb_publishable_CX3fwp7vwAG6cn_Qu_UAnw_7i55ZWX1";
 
   const container = document.getElementById("charList");
+  const filters = document.getElementById("filters");
+  const searchBar = document.getElementById("searchBar");
 
   const supabase = window.supabase.createClient(
     supabaseUrl,
@@ -34,6 +36,7 @@ window.onload = function () {
 
     card.dataset.id = chars.id;
     card.dataset.dead = chars.dead;
+    card.dataset.name = chars.name.toLowerCase();
 
     card.addEventListener("click", click);
 
@@ -86,6 +89,50 @@ window.onload = function () {
       card.dataset.dead = isDead;
     }
   };
+
+  const filterCards = (filter) => {
+    const cards = container.querySelectorAll(".card");
+
+    cards.forEach((card) => {
+      const isDead = card.dataset.dead === "true";
+
+      if (filter === "all") {
+        card.style.display = "flex";
+      } else if (filter === "alive" && isDead) {
+        card.style.display = "none";
+      } else if (filter === "dead" && !isDead) {
+        card.style.display = "none";
+      } else {
+        card.style.display = "flex";
+      }
+    });
+  };
+
+  const searchCards = (query) => {
+    const cards = container.querySelectorAll(".card");
+    const lowerCaseQuery = query.toLowerCase();
+
+    cards.forEach((card) => {
+      const name = card.dataset.name;
+      if (name.includes(lowerCaseQuery)) {
+        card.style.display = "flex";
+      } else {
+        card.style.display = "none";
+      }
+    });
+  };
+
+  searchBar.addEventListener("input", (e) => {
+    const query = e.target.value;
+    searchCards(query);
+  });
+
+  filters.addEventListener("click", (e) => {
+    if (e.target.tagName === "BUTTON") {
+      const filter = e.target.dataset.filter;
+      filterCards(filter);
+    }
+  });
 
   supabase
     .channel("char-realtime")
