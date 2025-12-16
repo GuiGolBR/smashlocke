@@ -44,6 +44,9 @@ window.onload = function () {
       password,
     });
 
+    if(!error) {
+      window.location.reload();
+    }
   }
 
   document.getElementById("loginBtn").addEventListener("click", login);
@@ -186,17 +189,24 @@ window.onload = function () {
 
   supabase.auth.getSession().then(({ data }) => {
     initialSessionLoaded = true;
+    init();
   });
 
   supabase.auth.onAuthStateChange((event, session) => {
     updateAuthUI(session);
 
-    if (event === "SIGNED_IN") init();
+    if (event === "SIGNED_IN" && !initialSessionLoaded) {
+      initialSessionLoaded = true;
+      init();
+    }
+
     if (event === "SIGNED_OUT") {
+      initialSessionLoaded = false;
       container.innerHTML = "";
       unsubscribeRealtime();
     }
   });
+
 
   document.getElementById("resetBtn").addEventListener("click", async () => {
   const email = document.getElementById("reset-email").value;
@@ -239,11 +249,13 @@ window.onload = function () {
     realtimeChannel = null;
   }
 
-  async function init() {
-    const {
-      data: { session }
-    } = await supabase.auth.getSession();
+  let initialized = false;
 
+  async function init() {
+    if (initialized) return;
+    initialized = true;
+
+    const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
 
     container.innerHTML = "";
@@ -252,7 +264,6 @@ window.onload = function () {
 
     subscribeRealtime();
   }
-
 
   init();
 };
