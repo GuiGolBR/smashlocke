@@ -1,0 +1,38 @@
+<input id="new-password" type="password" placeholder="New password">
+<button id="updatePasswordBtn">Update password</button>
+<style>
+    @font-face {
+    font-family: "MarkPro";
+    src: url(./MarkPro-Black.otf);
+    }
+    body {
+        background-color: black;
+        color: white;
+        font-family: 'MarkPro', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabase = window.supabase.createClient(
+    "https://natiuzdebpqhjjrtjiqo.supabase.co",
+    "sb_publishable_CX3fwp7vwAG6cn_Qu_UAnw_7i55ZWX1"
+  );
+
+  document.getElementById("updatePasswordBtn").addEventListener("click", async () => {
+    const password = document.getElementById("new-password").value;
+
+    const { error } = await supabase.auth.updateUser({
+      password
+    });
+
+    if (error) {
+      alert(error.message);
+    } else {
+      alert("Password updated!");
+      window.location.href = "/";
+    }
+  });
+</script>

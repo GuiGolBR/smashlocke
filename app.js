@@ -195,6 +195,18 @@ window.onload = function () {
     }
   });
 
+  document.getElementById("resetBtn").addEventListener("click", async () => {
+  const email = document.getElementById("reset-email").value;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: "/reset.html"
+  });
+
+  document.getElementById("resetStatus").textContent =
+    error ? error.message : "Password reset email sent!";
+  });
+
+
 
 
   function subscribeRealtime() {
