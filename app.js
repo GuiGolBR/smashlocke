@@ -199,7 +199,7 @@ window.onload = function () {
   const email = document.getElementById("reset-email").value;
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "/reset.html"
+    redirectTo: "https://guigolbr.github.io/smashlocke/reset.html"
   });
 
   document.getElementById("resetStatus").textContent =
