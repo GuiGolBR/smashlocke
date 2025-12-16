@@ -37,7 +37,7 @@ window.onload = function () {
     card.dataset.id = chars.id;
     card.dataset.dead = chars.dead;
     card.dataset.name = chars.name.toLowerCase();
-    card.dataset.series = chars.series.toLowerCase(); // Add series to dataset
+    card.dataset.series = chars.series.toLowerCase();
 
     card.addEventListener("click", click);
 
@@ -109,14 +109,14 @@ window.onload = function () {
     });
   };
 
-  // Update the searchCards function
+
   const searchCards = (query) => {
     const cards = container.querySelectorAll(".card");
     const lowerCaseQuery = query.toLowerCase();
 
     cards.forEach((card) => {
       const name = card.dataset.name;
-      const series = card.dataset.series; // Get series from dataset
+      const series = card.dataset.series;
 
       if (name.includes(lowerCaseQuery) || series.includes(lowerCaseQuery)) {
         card.style.display = "flex";
