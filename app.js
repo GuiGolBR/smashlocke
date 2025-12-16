@@ -2,6 +2,8 @@ window.onload = function () {
 
   const supabaseUrl = "https://natiuzdebpqhjjrtjiqo.supabase.co";
   const supabaseKey = "sb_publishable_CX3fwp7vwAG6cn_Qu_UAnw_7i55ZWX1";
+  let realtimeChannel = null;
+
 
   const container = document.getElementById("charList");
   const filters = document.getElementById("filters");
@@ -11,6 +13,45 @@ window.onload = function () {
     supabaseUrl,
     supabaseKey
   );
+
+  supabase.auth.getSession().then(({ data }) => {
+    updateAuthUI(data.session);
+  });
+
+
+  function updateAuthUI(session) {
+    const authBox = document.getElementById("authBox");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (session) {
+      authBox.style.display = "none";
+      logoutBtn.style.display = "block";
+    } else {
+      authBox.style.display = "block";
+      logoutBtn.style.display = "none";
+    }
+  }
+
+  async function login() {
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+  }
+
+  document.getElementById("loginBtn").addEventListener("click", login);
+  document.getElementById("logoutBtn").addEventListener("click", logout);
+
+
+  async function logout() {
+    await supabase.auth.signOut();
+  }
+
+
 
   async function loadChar() {
     const { data, error } = await supabase
@@ -138,25 +179,64 @@ window.onload = function () {
     }
   });
 
-  supabase
-    .channel("char-realtime")
-    .on(
-      "postgres_changes",
-      {
-        event: "UPDATE",
-        schema: "public",
-        table: "char",
-      },
-      (payload) => {
-        applyUpdate(payload.new);
-      }
-    )
-    .subscribe();
+  let initialSessionLoaded = false;
+
+  supabase.auth.getSession().then(({ data }) => {
+    initialSessionLoaded = true;
+  });
+
+  supabase.auth.onAuthStateChange((event, session) => {
+    updateAuthUI(session);
+
+    if (event === "SIGNED_IN") init();
+    if (event === "SIGNED_OUT") {
+      container.innerHTML = "";
+      unsubscribeRealtime();
+    }
+  });
+
+
+
+  function subscribeRealtime() {
+  if (realtimeChannel) return;
+
+  realtimeChannel = supabase
+      .channel("char-realtime")
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "char",
+        },
+        (payload) => {
+          applyUpdate(payload.new);
+        }
+      )
+      .subscribe();
+  }
+
+  function unsubscribeRealtime() {
+    if (!realtimeChannel) return;
+
+    supabase.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
 
   async function init() {
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
+
+    if (!session) return;
+
+    container.innerHTML = "";
     const chars = await loadChar();
     chars.forEach(buildCard);
+
+    subscribeRealtime();
   }
+
 
   init();
 };

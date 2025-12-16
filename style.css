@@ -148,3 +148,16 @@ body {
     font-size: 20px;
 }
 
+#login {
+    margin-bottom: 20px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+#authBox {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
