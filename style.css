@@ -1,0 +1,80 @@
+@font-face {
+    font-family: "MarkPro";
+    src: url(./MarkPro-Black.otf);
+}
+
+h1 {
+    color: white;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'MarkPro', sans-serif;
+    background: #000000;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(31, 31, 31, 1) 50%, rgba(79, 79, 79, 1) 100%);
+}
+
+#charList {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    width: 150px;
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+    background-color: rgb(255, 255, 255);
+    transition: filter 0.35s ease, transform 0.2s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.card.dead {
+    filter: grayscale(100%);
+    animation: deathPop 0.25s ease;
+}
+
+@keyframes deathPop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(0.95) rotate(-1deg); }
+    100% { transform: scale(1); }
+}
+
+.charImage {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.card::after {
+    content: "☠️";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    font-size: 60px;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+}
+
+.card.dead::after {
+    opacity: 1;
+    scale: 4;
+}
+
+.charName {
+    font-size: 20px;
+}
+
