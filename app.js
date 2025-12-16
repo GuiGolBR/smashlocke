@@ -22,13 +22,16 @@ window.onload = function () {
   function updateAuthUI(session) {
     const authBox = document.getElementById("authBox");
     const logoutBtn = document.getElementById("logoutBtn");
+    const resetSection = document.getElementById("resetSection");
 
     if (session) {
       authBox.style.display = "none";
       logoutBtn.style.display = "block";
+      resetSection.style.display = "block";
     } else {
       authBox.style.display = "block";
       logoutBtn.style.display = "none";
+      resetSection.style.display = "none";
     }
   }
 
