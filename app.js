@@ -57,8 +57,16 @@ window.onload = function () {
 
 
   async function logout() {
+    const { data } = await supabase.auth.getSession();
+
+    if (!data.session) {
+      console.warn("No session to sign out");
+      return;
+    }
+
     await supabase.auth.signOut();
   }
+
 
 
 
