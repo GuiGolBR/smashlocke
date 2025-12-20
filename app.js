@@ -24,6 +24,8 @@ window.onload = function () {
     const logoutBtn = document.getElementById("logoutBtn");
     const resetSection = document.getElementById("resetSection");
 
+    container.classList.toggle("readonly", !session);
+
     if (session) {
       authBox.style.display = "none";
       logoutBtn.style.display = "block";
@@ -34,6 +36,7 @@ window.onload = function () {
       resetSection.style.display = "none";
     }
   }
+
 
   async function login() {
     const email = document.getElementById("login-email").value;
@@ -101,25 +104,26 @@ window.onload = function () {
   };
 
   const click = async (e) => {
-    const card = e.currentTarget;
+      const card = e.currentTarget;
 
-    if (card.dataset.loading === "true") return;
-    card.dataset.loading = "true";
+      if (card.dataset.loading === "true") return;
+      card.dataset.loading = "true";
 
-    const id = card.dataset.id;
-    const currentDead = card.dataset.dead === "true";
+      const id = card.dataset.id;
+      const currentDead = card.dataset.dead === "true";
 
-    const { error } = await supabase
-      .from("char")
-      .update({ dead: !currentDead })
-      .eq("id", id);
+      const { error } = await supabase
+        .from("char")
+        .update({ dead: !currentDead })
+        .eq("id", id);
 
-    if (error) {
-      console.error("Update failed:", error);
-    }
+      if (error) {
+        console.error("Update failed:", error);
+      }
 
-    card.dataset.loading = "false";
-  };
+      card.dataset.loading = "false";
+    };
+
 
   const getCardById = (id) => {
     return container.querySelector(`.card[data-id="${id}"]`);
@@ -255,15 +259,13 @@ window.onload = function () {
     if (initialized) return;
     initialized = true;
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
     container.innerHTML = "";
     const chars = await loadChar();
     chars.forEach(buildCard);
 
     subscribeRealtime();
   }
+
 
   init();
 };
